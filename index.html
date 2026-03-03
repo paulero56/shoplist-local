@@ -1,35 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
   <head>
-    <title>Shopping List</title>
+    <title>CartIt — Tu lista de compras</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta property="og:title" content="Shopping List" />
+    <meta property="og:title" content="CartIt — Tu lista de compras" />
     <meta property="og:description" content="Tu lista de compras personal, guardada en tu dispositivo" />
-    <meta property="og:image" content="https://shoplist-local.netlify.app/shoppincart.jpg" />
+    <meta property="og:image" content="https://shoplist-local.netlify.app/assets/shopping-cart-full-food-yellow-background-grocery-food-store-concept_708636-682.jpg" />
     <meta property="og:url" content="https://shoplist-local.netlify.app" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://shoplist-local.netlify.app/shoppincart.jpg" />
+    <meta name="twitter:image" content="https://shoplist-local.netlify.app/assets/shopping-cart-full-food-yellow-background-grocery-food-store-concept_708636-682.jpg" />
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <button id="theme-toggle" class="theme-toggle">🌙</button>
-    <div class="container">
-      <img src="/shoppincart.jpg" class="app-icon" />
-      <h1 class="app-title">Shopping List</h1>
-      <input type="text" id="input-field" placeholder="Ej. Huevos" />
-      <button id="add-button">Agregar Mandado</button>
-      <button id="undo-button" class="undo-button">Regresar Articulo</button>
-      <ul id="shopping-list"></ul>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+
+    <div class="wrapper">
+      <header class="app-header">
+        <div class="app-icon-wrap">🛒</div>
+        <h1 class="app-title">CartIt</h1>
+        <p class="app-subtitle">Tu lista, solo tuya</p>
+        <span class="item-count" id="item-count">0 artículos</span>
+      </header>
+
+      <div class="card">
+        <div class="input-row">
+          <input type="text" id="input-field" placeholder="¿Qué necesitas comprar?" autocomplete="off" />
+          <button id="add-button" aria-label="Agregar">+</button>
+        </div>
+
+        <ul id="shopping-list"></ul>
+
+        <div class="actions-row">
+          <button id="undo-button" class="btn-undo">↩ Deshacer</button>
+          <button id="clear-button" class="btn-clear">🗑 Limpiar todo</button>
+        </div>
+      </div>
     </div>
+
     <script src="index.js"></script>
   </body>
 </html>

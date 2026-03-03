@@ -1,8 +1,8 @@
-// Shopping list stored locally — no Firebase, no real-time sync across devices
+// Shopping list — localStorage only, no sync across devices
 
 const STORAGE_KEY = "shoppingList"
 
-// Dark mode toggle
+// ── Dark mode ──────────────────────────────────────────
 const themeToggleEl = document.getElementById("theme-toggle")
 
 if (localStorage.getItem("theme") === "dark") {
@@ -17,56 +17,64 @@ themeToggleEl.addEventListener("click", function () {
     localStorage.setItem("theme", isDark ? "dark" : "light")
 })
 
-// DOM elements
-const inputFieldEl = document.getElementById("input-field")
-const addButtonEl = document.getElementById("add-button")
-const undoButtonEl = document.getElementById("undo-button")
+// ── DOM refs ───────────────────────────────────────────
+const inputFieldEl   = document.getElementById("input-field")
+const addButtonEl    = document.getElementById("add-button")
+const undoButtonEl   = document.getElementById("undo-button")
+const clearButtonEl  = document.getElementById("clear-button")
 const shoppingListEl = document.getElementById("shopping-list")
+const itemCountEl    = document.getElementById("item-count")
 
 let lastDeletedItem = null
 
-// Load items from localStorage
+// ── Storage helpers ────────────────────────────────────
 function loadItems() {
     const stored = localStorage.getItem(STORAGE_KEY)
     return stored ? JSON.parse(stored) : []
 }
 
-// Save items to localStorage
 function saveItems(items) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
 }
 
-// Render the shopping list from localStorage
+// ── Render ─────────────────────────────────────────────
 function renderList() {
     const items = loadItems()
-    clearShoppingListEl()
+    shoppingListEl.innerHTML = ""
 
     if (items.length > 0) {
-        items.forEach(item => appendItemToShoppingListEl(item))
+        items.forEach(item => appendItemEl(item))
     } else {
-        shoppingListEl.innerHTML = "Lista Vacia"
+        const empty = document.createElement("p")
+        empty.className = "empty-state"
+        empty.textContent = "Tu lista está vacía — agrega algo 🛒"
+        shoppingListEl.appendChild(empty)
     }
+
+    updateCount(items.length)
 }
 
-// Add new item when add button is clicked
+function updateCount(n) {
+    itemCountEl.textContent = n === 1 ? "1 artículo" : `${n} artículos`
+}
+
+// ── Add item ───────────────────────────────────────────
 addButtonEl.addEventListener("click", function () {
-    const inputValue = inputFieldEl.value.trim()
-    if (inputValue !== "") {
+    const value = inputFieldEl.value.trim()
+    if (value !== "") {
         const items = loadItems()
-        const newItem = { id: Date.now().toString(), value: inputValue }
-        items.push(newItem)
+        items.push({ id: Date.now().toString(), value })
         saveItems(items)
-        clearInputFieldEl()
+        inputFieldEl.value = ""
         renderList()
     }
 })
 
-// Allow pressing Enter to add an item
 inputFieldEl.addEventListener("keydown", function (e) {
     if (e.key === "Enter") addButtonEl.click()
 })
 
-// Undo button — restore the last deleted item
+// ── Undo ───────────────────────────────────────────────
 undoButtonEl.addEventListener("click", function () {
     if (lastDeletedItem) {
         const items = loadItems()
@@ -77,30 +85,28 @@ undoButtonEl.addEventListener("click", function () {
     }
 })
 
-// Clear the shopping list element
-function clearShoppingListEl() {
-    shoppingListEl.innerHTML = ""
-}
+// ── Clear all ──────────────────────────────────────────
+clearButtonEl.addEventListener("click", function () {
+    if (loadItems().length === 0) return
+    saveItems([])
+    lastDeletedItem = null
+    renderList()
+})
 
-// Clear the input field
-function clearInputFieldEl() {
-    inputFieldEl.value = ""
-}
+// ── Build list item element ────────────────────────────
+function appendItemEl(item) {
+    const li = document.createElement("li")
+    li.textContent = item.value
 
-// Append a single item to the list element
-function appendItemToShoppingListEl(item) {
-    const newEl = document.createElement("li")
-    newEl.textContent = item.value
-
-    newEl.addEventListener("click", function () {
+    li.addEventListener("click", function () {
         lastDeletedItem = item
         const items = loadItems().filter(i => i.id !== item.id)
         saveItems(items)
         renderList()
     })
 
-    shoppingListEl.append(newEl)
+    shoppingListEl.appendChild(li)
 }
 
-// Initial render on page load
+// ── Init ───────────────────────────────────────────────
 renderList()
